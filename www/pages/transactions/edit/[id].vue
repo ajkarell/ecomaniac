@@ -1,70 +1,71 @@
 <template>
   <div>
-  <form
-    v-if="isOk"
-    @submit.prevent="saveAndExit"
-    class="px-8 py-4 rounded-lg shadow border border-gray-300"
-  >
-    <div class="mb-4 flex flex-col">
-      <div class="pb-2">
-        <label class="block text-gray-700 font-bold mb-2" for="date">
-          Date
-        </label>
-        <input
-          v-model="transactionDateString"
-          class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="date"
-          type="date"
-        />
-      </div>
-      <div class="pb-2">
-        <label class="block text-gray-700 font-bold mb-2" for="amount">
-          Amount
-        </label>
-        <input
-          v-model="transactionAmount"
-          class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="amount"
-          type="number"
-          step="0.01"
-          placeholder="0.00 €"
-        />
-      </div>
-      <div class="">
-        <label class="block text-gray-700 font-bold mb-2" for="description">
-          Description
-        </label>
-        <input
-          v-model="transactionDescription"
-          class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="description"
-          type="text"
-          placeholder="Description"
-        />
-      </div>
-    </div>
-    <button
-      type="submit"
-      class="mr-2 px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white rounded-lg border border-blue-700"
+    <form
+      v-show="isOk"
+      @submit.prevent="saveAndExit"
+      class="px-8 py-4 rounded-lg shadow border border-gray-300"
     >
-      Save
-    </button>
-    <button
-      @click.prevent="deleteAndExit()"
-      class="mr-2 px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded-lg border border-red-700"
-    >
-      Delete
-    </button>
-    <button
-      @click.prevent="navigateTo('/')"
-      class="px-4 py-2 text-gray-700 rounded-lg border border-gray-700"
-    >
-      Cancel
-    </button>
-  </form>
-  <h1 v-else-if="!isOk" class="text-xl text-red-700">
-    Transaction with ID {{ transactionId }} not found.
-  </h1>
+      <div class="mb-4 flex flex-col">
+        <div class="pb-2">
+          <label class="block text-gray-700 font-bold mb-2" for="date">
+            Date
+          </label>
+          <input
+            v-model="transactionDateString"
+            class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="date"
+            type="date"
+          />
+        </div>
+        <div class="pb-2">
+          <label class="block text-gray-700 font-bold mb-2" for="amount">
+            Amount
+          </label>
+          <input
+            v-model="transactionAmount"
+            ref="amountInput"
+            class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="amount"
+            type="number"
+            step="0.01"
+            placeholder="0.00 €"
+          />
+        </div>
+        <div class="">
+          <label class="block text-gray-700 font-bold mb-2" for="description">
+            Description
+          </label>
+          <input
+            v-model="transactionDescription"
+            class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="description"
+            type="text"
+            placeholder="Description"
+          />
+        </div>
+      </div>
+      <button
+        type="submit"
+        class="mr-2 px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white rounded-lg border border-blue-700"
+      >
+        Save
+      </button>
+      <button
+        @click.prevent="deleteAndExit()"
+        class="mr-2 px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded-lg border border-red-700"
+      >
+        Delete
+      </button>
+      <button
+        @click.prevent="navigateTo('/')"
+        class="px-4 py-2 text-gray-700 rounded-lg border border-gray-700"
+      >
+        Cancel
+      </button>
+    </form>
+    <h1 v-show="isOk === false" class="text-xl text-red-700">
+      Transaction with ID {{ transactionId }} not found.
+    </h1>
   </div>
 </template>
 
@@ -92,6 +93,8 @@ const transactionId: number = Array.isArray(route.params.id)
   : parseInt(route.params.id);
 
 const isOk = ref<boolean | null>(null);
+
+const amountInput = ref(null);
 
 async function saveAndExit() {
   const response = await putTransaction({
@@ -127,5 +130,9 @@ onMounted(async () => {
     transactionDescription.value = transaction.description;
   }
   isOk.value = result.ok;
+
+  await nextTick();
+
+  amountInput.value.select();
 });
 </script>
