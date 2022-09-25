@@ -143,5 +143,6 @@ async function fetchTransactions() {
 
 onMounted(async () => {
   await fetchTransactions();
+  amountInput.value.select();
 });
 </script>
