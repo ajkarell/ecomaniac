@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Ecomaniac.Api.Validation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -42,24 +43,33 @@ public class TransactionsController : ControllerBase
     [HttpPost("transactions")]
     public async Task<ActionResult<Transaction>> PostTransaction(Transaction transaction)
     {
+        if (!TransactionValidator.Validate(transaction, out var errorMessage))
+        {
+            return BadRequest(errorMessage);
+        }
+
+        _db.Add(transaction);
+
+        await _db.SaveChangesAsync();
+        return CreatedAtAction(nameof(GetTransaction), new { id = transaction.Id }, transaction);
+    }
+
+    [HttpPut("transactions")]
+    public async Task<ActionResult<Transaction>> PutTransaction(Transaction transaction)
+    {
         if (transaction.Id < 1)
         {
             return BadRequest("Id must be positive.");
         }
 
-        if (transaction.Amount == 0)
-        {
-            return BadRequest("Transaction amount cannot be zero.");
-        }
-
-        if (transaction.Date > DateTimeOffset.Now)
-        {
-            return BadRequest("Transaction date cannot be in the future.");
-        }
-
         var existing = await _db.Transactions.FindAsync(transaction.Id);
         if (existing != null)
         {
+            if (!TransactionValidator.Validate(transaction, out var errorMessage))
+            {
+                return BadRequest(errorMessage);
+            }
+
             existing.Date = transaction.Date;
             existing.Amount = transaction.Amount;
             existing.Description = transaction.Description;
@@ -69,10 +79,7 @@ public class TransactionsController : ControllerBase
         }
         else
         {
-            _db.Add(transaction);
-
-            await _db.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetTransaction), new { id = transaction.Id }, transaction);
+            return NotFound();
         }
     }
 

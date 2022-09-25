@@ -4,7 +4,10 @@ public class Transaction
 {
     [Key]
     public int Id { get; set; }
+    [Required]
     public DateTimeOffset Date { get; set; }
+    [Required]
     public decimal Amount { get; set; }
+    [Required]
     public string Description { get; set; }
 }

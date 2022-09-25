@@ -41,6 +41,22 @@ export function createApi() {
     return response;
   }
 
+  async function putToApi(
+    path: string,
+    data: any
+  ) {
+    const response = await fetch(baseUrl + path, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    return response;
+  }
+
   async function deleteFromApi(path: string) {
     const response = await fetch(baseUrl + path, {
       method: 'DELETE',
@@ -61,6 +77,7 @@ export function createApi() {
         dtos.map(toTransaction)
       ),
     postTransaction: (transaction: any) => postToApi("transactions", transaction),
+    putTransaction: (transaction: any) => putToApi("transactions", transaction),
     deleteTransaction: (id: number) => deleteFromApi(`transactions/${id}`)
   };
 }

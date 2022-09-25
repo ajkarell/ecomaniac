@@ -67,7 +67,7 @@ import { format, parseISO } from "date-fns";
 import { createApi } from "~~/api";
 import { Transaction } from "~~/models/transaction";
 
-const { getTransaction, postTransaction, deleteTransaction } = createApi();
+const { getTransaction, putTransaction, deleteTransaction } = createApi();
 
 const today = new Date();
 today.setUTCHours(0, 0, 0, 0);
@@ -88,7 +88,7 @@ const transactionId: number = Array.isArray(route.params.id)
 const isOk = ref<boolean | null>(null);
 
 async function saveAndExit() {
-  const response = await postTransaction({
+  const response = await putTransaction({
     id: transactionId,
     date: transactionDate.value,
     amount: transactionAmount.value,
