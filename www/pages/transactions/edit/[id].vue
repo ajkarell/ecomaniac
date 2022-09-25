@@ -1,4 +1,5 @@
 <template>
+  <div>
   <form
     v-if="isOk"
     @submit.prevent="saveAndExit"
@@ -64,6 +65,7 @@
   <h1 v-else-if="!isOk" class="text-xl text-red-700">
     Transaction with ID {{ transactionId }} not found.
   </h1>
+  </div>
 </template>
 
 <script setup lang="ts">
