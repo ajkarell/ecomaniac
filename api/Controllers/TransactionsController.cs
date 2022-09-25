@@ -42,6 +42,11 @@ public class TransactionsController : ControllerBase
     [HttpPost("transactions")]
     public async Task<ActionResult<Transaction>> PostTransaction(Transaction transaction)
     {
+        if (transaction.Id < 1)
+        {
+            return BadRequest("Id must be positive.");
+        }
+
         if (transaction.Amount == 0)
         {
             return BadRequest("Transaction amount cannot be zero.");
@@ -64,20 +69,26 @@ public class TransactionsController : ControllerBase
         }
         else
         {
-        _db.Add(transaction);
+            _db.Add(transaction);
 
-        await _db.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetTransaction), new { id = transaction.Id }, transaction);
+            await _db.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetTransaction), new { id = transaction.Id }, transaction);
         }
     }
 
     [HttpDelete("transactions/{id}")]
     public async Task<ActionResult> DeleteTransaction(int id)
     {
-        var transaction = new Transaction { Id = id };
-        _db.Remove(transaction);
-        await _db.SaveChangesAsync();
-
-        return NoContent();
+        var transaction = await _db.Transactions.FindAsync(id);
+        if (transaction != null)
+        {
+            _db.Remove(transaction);
+            await _db.SaveChangesAsync();
+            return NoContent();
+        }
+        else
+        {
+            return NotFound();
+        }
     }
 }
