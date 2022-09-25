@@ -52,10 +52,23 @@ public class TransactionsController : ControllerBase
             return BadRequest("Transaction date cannot be in the future.");
         }
 
-        _db.Add(transaction);
-        await _db.SaveChangesAsync();
+        var existing = await _db.Transactions.FindAsync(transaction.Id);
+        if (existing != null)
+        {
+            existing.Date = transaction.Date;
+            existing.Amount = transaction.Amount;
+            existing.Description = transaction.Description;
 
+            await _db.SaveChangesAsync();
+            return NoContent();
+        }
+        else
+        {
+        _db.Add(transaction);
+
+        await _db.SaveChangesAsync();
         return CreatedAtAction(nameof(GetTransaction), new { id = transaction.Id }, transaction);
+        }
     }
 
     [HttpDelete("transactions")]
