@@ -8,5 +8,5 @@ export function formatEuro(amount: number) {
 }
 
 export function formatTransactionDate(date: Date) {
-  return date.toLocaleString();
+  return date.toLocaleDateString();
 }

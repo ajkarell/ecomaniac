@@ -6,7 +6,7 @@
     <span class="text-lg">Record transaction</span>
     <hr class="mb-2" />
     <form @submit.prevent="recordTransaction" class="mb-2">
-      <div class="flex flex-wrap">
+      <div class="flex flex-col">
         <div class="pr-3 pb-2">
           <label class="block text-gray-700 font-bold mb-2" for="date">
             Date
@@ -68,7 +68,7 @@
           class="cursor-pointer hover:bg-gray-200"
           @click="gotoTransactionDetails(transaction.id)"
         >
-          <td class="pr-4">{{ formatRelative(transaction.date, today) }}</td>
+          <td class="pr-4">{{ formatTransactionDate(transaction.date) }}</td>
           <td class="pr-4">{{ transaction.description }}</td>
           <td
             class="font-bold"
@@ -91,8 +91,8 @@
 <script setup lang="ts">
 import { createApi } from "~~/api";
 import { Transaction } from "~~/models/transaction";
-import { formatEuro } from "~~/formatting";
-import { format, formatRelative, parseISO } from "date-fns";
+import { formatEuro, formatTransactionDate } from "~~/formatting";
+import { format, parseISO } from "date-fns";
 
 const { getTransactions, postTransaction } = createApi();
 
@@ -109,7 +109,7 @@ const transactionAmount = ref(0.0);
 const transactionDescription = ref("");
 
 function gotoTransactionDetails(id: number) {
-  navigateTo(`/transactions/${id}`);
+  navigateTo(`/transactions/edit/${id}`);
 }
 
 async function recordTransaction() {
