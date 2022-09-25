@@ -12,7 +12,7 @@
     "editor.fontLigatures": true
   },
   "[vue]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.fontLigatures": true
   },
   "eslint.validate": [
