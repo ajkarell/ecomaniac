@@ -3,12 +3,14 @@ import { Result } from "./result";
 import { parseISO } from "date-fns";
 
 export function createApi() {
+  const baseUrl = "https://localhost:5001/";
+
   async function fetchFromApi<T>(
     path: string,
     mapper: (dto: any) => T
   ): Promise<Result<T>> {
     try {
-      const response = await fetch(`https://localhost:5001/${path}`);
+      const response = await fetch(baseUrl + path);
       if (response.ok) {
         const data = mapper(await response.json());
         return { ok: true, value: data };
@@ -23,6 +25,22 @@ export function createApi() {
     }
   }
 
+  async function postToApi(
+    path: string,
+    data: any
+  ) {
+    const response = await fetch(baseUrl + path, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    return response;
+  }
+
   return {
     getTransaction: (id: number) =>
       fetchFromApi<Transaction>(`transactions/${id}`, toTransaction),
@@ -30,6 +48,7 @@ export function createApi() {
       fetchFromApi<Transaction[]>("transactions", (dtos: any) =>
         dtos.map(toTransaction)
       ),
+    postTransaction: (transaction: any) => postToApi("transactions", transaction)
   };
 }
 
