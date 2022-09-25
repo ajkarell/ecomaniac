@@ -71,7 +71,7 @@ public class TransactionsController : ControllerBase
         }
     }
 
-    [HttpDelete("transactions")]
+    [HttpDelete("transactions/{id}")]
     public async Task<ActionResult> DeleteTransaction(int id)
     {
         var transaction = new Transaction { Id = id };
