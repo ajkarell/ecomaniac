@@ -1,8 +1,8 @@
 <template>
-  <div v-if="transactions !== null" class="flex">
+  <div v-if="transactions !== null" class="flex flex-wrap items-start">
     <div class="mr-4 px-4 py-2 rounded-lg shadow border border-gray-300">
       <span class="text-lg">Record transaction</span>
-      <hr class="mb-2" />
+      <hr />
       <form @submit.prevent="recordTransaction" class="mb-2">
         <div class="flex flex-col">
           <div class="pr-3 pb-2">
@@ -51,41 +51,34 @@
         </button>
       </form>
     </div>
-    <div class="px-4 py-2 rounded-lg shadow border border-gray-300">
+    <div class="mr-4 px-4 py-2 rounded-lg shadow border border-gray-300">
       <span class="text-lg">Transactions</span>
-      <hr class="mb-2" />
-      <table class="table-auto">
-        <thead>
-          <tr class="text-left">
-            <th>Date</th>
-            <th>Description</th>
-            <th>Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="transaction in transactions"
-            :key="transaction.id"
-            class="cursor-pointer hover:bg-gray-200"
+      <hr />
+
+      <div v-if="transactions.length > 0">
+        <div v-for="dateTransactions in transactionsByDate">
+          <h1 class="text-md font-bold">
+            {{ formatTransactionDate(dateTransactions[0].date) }}
+          </h1>
+          <button
+            v-for="transaction in dateTransactions"
             @click="gotoTransactionDetails(transaction.id)"
+            class="w-full px-2 py-1 flex justify-between rounded hover:bg-gray-200"
           >
-            <td class="pr-4">{{ formatTransactionDate(transaction.date) }}</td>
-            <td class="pr-4">{{ transaction.description }}</td>
-            <td
-              class="font-bold"
-              :class="{
-                'text-green-600': transaction.amount > 0,
-                'text-red-600': transaction.amount < 0,
-              }"
-            >
+            <span class="mr-4">{{
+              transaction.description.length > 0
+                ? transaction.description
+                : "&#8212;"
+            }}</span>
+            <span class="font-bold" :class="moneyClass(transaction.amount)">
               {{ formatEuro(transaction.amount) }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </span>
+          </button>
+        </div>
+      </div>
+      <span v-else class="font-light italic">No transactions.</span>
     </div>
   </div>
-
   <h1 v-else class="text-2xl font-medium text-red-600">
     Ei yhteyttä palvelimeen.
   </h1>
@@ -103,6 +96,27 @@ const transactions = ref<Transaction[] | null>(null);
 const today = new Date();
 today.setUTCHours(0, 0, 0, 0);
 
+const transactionMonths = computed<number[] | null>(() => {
+  return [...new Set(transactions.value.map((t) => t.date.getMonth()))];
+});
+
+const transactionsByDate = computed<any | null>(() => {
+  if (transactions.value === null) return null;
+
+  const dates = {};
+
+  transactions.value.forEach((transaction) => {
+    const dateString = format(transaction.date, "yyyy-MM-dd");
+    if (dateString in dates) {
+      dates[dateString].push(transaction);
+    } else {
+      dates[dateString] = new Array(transaction);
+    }
+  });
+
+  return dates;
+});
+
 const transactionDateString = ref<string>(format(today, "yyyy-MM-dd"));
 const transactionDate = computed(() => {
   return parseISO(transactionDateString.value);
@@ -110,6 +124,10 @@ const transactionDate = computed(() => {
 
 const transactionAmount = ref(0.0);
 const transactionDescription = ref("");
+
+function moneyClass(amount: number) {
+  return amount > 0 ? "text-green-600" : amount < 0 ? "text-red-600" : "";
+}
 
 function gotoTransactionDetails(id: number) {
   navigateTo(`/transactions/edit/${id}`);
@@ -128,7 +146,9 @@ async function recordTransaction() {
     transactionDescription.value = "";
     amountInput.value.select();
   } else {
-    alert(await response.json());
+    const body = await response.json();
+    console.log(body);
+    alert(body);
   }
 
   await fetchTransactions();
@@ -146,3 +166,9 @@ onMounted(async () => {
   amountInput.value.select();
 });
 </script>
+
+<style lang="postcss">
+hr {
+  @apply my-2;
+}
+</style>

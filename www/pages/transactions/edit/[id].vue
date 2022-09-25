@@ -1,7 +1,11 @@
 <template>
-  <form v-if="isOk" @submit.prevent="saveAndExit" class="mb-2">
-    <div class="flex flex-col">
-      <div class="pr-3 pb-2">
+  <form
+    v-if="isOk"
+    @submit.prevent="saveAndExit"
+    class="px-8 py-4 rounded-lg shadow border border-gray-300"
+  >
+    <div class="mb-4 flex flex-col">
+      <div class="pb-2">
         <label class="block text-gray-700 font-bold mb-2" for="date">
           Date
         </label>
@@ -12,7 +16,7 @@
           type="date"
         />
       </div>
-      <div class="pr-3 pb-2">
+      <div class="pb-2">
         <label class="block text-gray-700 font-bold mb-2" for="amount">
           Amount
         </label>
@@ -25,13 +29,13 @@
           placeholder="0.00 €"
         />
       </div>
-      <div class="pb-2">
+      <div class="">
         <label class="block text-gray-700 font-bold mb-2" for="description">
           Description
         </label>
         <input
           v-model="transactionDescription"
-          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           id="description"
           type="text"
           placeholder="Description"
@@ -40,19 +44,19 @@
     </div>
     <button
       type="submit"
-      class="mt-2 mr-2 px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white rounded-lg border border-blue-700"
+      class="mr-2 px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white rounded-lg border border-blue-700"
     >
       Save
     </button>
     <button
       @click.prevent="deleteAndExit()"
-      class="mt-2 mr-2 px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded-lg border border-red-700"
+      class="mr-2 px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded-lg border border-red-700"
     >
       Delete
     </button>
     <button
       @click.prevent="navigateTo('/')"
-      class="mt-2 px-4 py-2 text-gray-700 rounded-lg border border-gray-700"
+      class="px-4 py-2 text-gray-700 rounded-lg border border-gray-700"
     >
       Cancel
     </button>
