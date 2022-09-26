@@ -4,6 +4,7 @@
       v-show="isOk"
       @submit.prevent="saveAndExit"
       @keydown.esc="navigateTo('/')"
+      @keydown.delete="deleteAndExit()"
       class="px-8 py-4 rounded-lg shadow border border-gray-300"
     >
       <div class="mb-4 flex flex-col">
