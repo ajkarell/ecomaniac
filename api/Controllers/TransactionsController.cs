@@ -41,7 +41,7 @@ public class TransactionsController : ControllerBase
     }
 
     [HttpPost("transactions")]
-    public async Task<ActionResult<Transaction>> PostTransaction(Transaction transaction)
+    public async Task<ActionResult<Transaction>> PostTransaction([Required] Transaction transaction)
     {
         if (!TransactionValidator.Validate(transaction, out var errorMessage))
         {
@@ -55,7 +55,7 @@ public class TransactionsController : ControllerBase
     }
 
     [HttpPut("transactions")]
-    public async Task<ActionResult<Transaction>> PutTransaction(Transaction transaction)
+    public async Task<ActionResult<Transaction>> PutTransaction([Required] Transaction transaction)
     {
         if (transaction.Id < 1)
         {
@@ -84,7 +84,7 @@ public class TransactionsController : ControllerBase
     }
 
     [HttpDelete("transactions/{id}")]
-    public async Task<ActionResult> DeleteTransaction(int id)
+    public async Task<ActionResult> DeleteTransaction([Required] int id)
     {
         var transaction = await _db.Transactions.FindAsync(id);
         if (transaction != null)
