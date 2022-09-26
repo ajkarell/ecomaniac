@@ -20,14 +20,11 @@
             <label class="block text-gray-700 font-bold mb-2" for="amount">
               Amount
             </label>
-            <input
+            <input-currency
               v-model="transactionAmount"
-              ref="amountInput"
+              ref="amountInputRef"
               class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="amount"
-              type="number"
-              step="0.01"
-              placeholder="0.00 €"
             />
           </div>
           <div class="pb-2">
@@ -96,10 +93,6 @@ const transactions = ref<Transaction[] | null>(null);
 const today = new Date();
 today.setUTCHours(0, 0, 0, 0);
 
-const transactionMonths = computed<number[] | null>(() => {
-  return [...new Set(transactions.value.map((t) => t.date.getMonth()))];
-});
-
 const transactionsByDate = computed<any | null>(() => {
   if (transactions.value === null) return null;
 
@@ -125,6 +118,8 @@ const transactionDate = computed(() => {
 const transactionAmount = ref(0.0);
 const transactionDescription = ref("");
 
+const amountInputRef = ref(null);
+
 function moneyClass(amount: number) {
   return amount > 0 ? "text-green-600" : amount < 0 ? "text-red-600" : "";
 }
@@ -132,8 +127,6 @@ function moneyClass(amount: number) {
 function gotoTransactionDetails(id: number) {
   navigateTo(`/transactions/edit/${id}`);
 }
-
-const amountInput = ref(null);
 
 async function recordTransaction() {
   const response = await postTransaction({
@@ -144,10 +137,9 @@ async function recordTransaction() {
 
   if (response.ok) {
     transactionDescription.value = "";
-    amountInput.value.select();
+    amountInputRef.value.select();
   } else {
     const body = await response.json();
-    console.log(body);
     alert(body);
   }
 
@@ -163,7 +155,7 @@ async function fetchTransactions() {
 
 onMounted(async () => {
   await fetchTransactions();
-  amountInput.value.select();
+  amountInputRef.value.select();
 });
 </script>
 

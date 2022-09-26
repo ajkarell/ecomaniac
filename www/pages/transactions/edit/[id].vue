@@ -21,14 +21,11 @@
           <label class="block text-gray-700 font-bold mb-2" for="amount">
             Amount
           </label>
-          <input
+          <input-currency
             v-model="transactionAmount"
-            ref="amountInput"
+            ref="amountInputRef"
             class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="amount"
-            type="number"
-            step="0.01"
-            placeholder="0.00 €"
           />
         </div>
         <div class="">
@@ -94,7 +91,7 @@ const transactionId: number = Array.isArray(route.params.id)
 
 const isOk = ref<boolean | null>(null);
 
-const amountInput = ref(null);
+const amountInputRef = ref(null);
 
 async function saveAndExit() {
   const response = await putTransaction({
@@ -133,6 +130,6 @@ onMounted(async () => {
 
   await nextTick();
 
-  amountInput.value.select();
+  amountInputRef.value.select();
 });
 </script>
