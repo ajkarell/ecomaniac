@@ -44,6 +44,8 @@
       <button
         type="submit"
         class="mr-2 px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white rounded-lg border border-blue-700"
+        :class="{ 'opacity-50': !isTransactionValid(transactionEdited) }"
+        :disabled="!isTransactionValid(transactionEdited)"
       >
         Save
       </button>
@@ -69,7 +71,7 @@
 <script setup lang="ts">
 import { format, parseISO } from "date-fns";
 import { createApi } from "~~/api";
-import { Transaction } from "~~/models/transaction";
+import { Transaction, isTransactionValid } from "~~/models/transaction";
 
 const { getTransaction, putTransaction, deleteTransaction } = createApi();
 
@@ -83,6 +85,14 @@ const transactionDate = computed(() => {
 
 const transactionAmount = ref(0.0);
 const transactionDescription = ref("");
+
+const transactionEdited = computed(() => {
+  return {
+    date: transactionDate.value,
+    amount: transactionAmount.value,
+    description: transactionDescription.value,
+  } as Transaction;
+});
 
 const route = useRoute();
 const transactionId: number = Array.isArray(route.params.id)

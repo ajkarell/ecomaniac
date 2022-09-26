@@ -43,6 +43,8 @@
         <button
           type="submit"
           class="mt-2 px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white rounded-lg border border-blue-700"
+          :class="{ 'opacity-50': !isTransactionValid(transactionToRecord) }"
+          :disabled="!isTransactionValid(transactionToRecord)"
         >
           Record
         </button>
@@ -83,7 +85,7 @@
 
 <script setup lang="ts">
 import { createApi } from "~~/api";
-import { Transaction } from "~~/models/transaction";
+import { Transaction, isTransactionValid } from "~~/models/transaction";
 import { formatEuro, formatTransactionDate } from "~~/formatting";
 import { format, parseISO } from "date-fns";
 
@@ -118,6 +120,14 @@ const transactionDate = computed(() => {
 const transactionAmount = ref(0.0);
 const transactionDescription = ref("");
 
+const transactionToRecord = computed(() => {
+  return {
+    date: transactionDate.value,
+    amount: transactionAmount.value,
+    description: transactionDescription.value,
+  } as Transaction;
+});
+
 const amountInputRef = ref(null);
 
 function moneyClass(amount: number) {
@@ -140,6 +150,7 @@ async function recordTransaction() {
     amountInputRef.value.select();
   } else {
     const body = await response.json();
+    console.error(body);
     alert(body);
   }
 
