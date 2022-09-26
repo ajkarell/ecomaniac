@@ -64,11 +64,7 @@
             @click="gotoTransactionDetails(transaction.id)"
             class="w-full px-2 py-1 flex justify-between rounded hover:bg-gray-200"
           >
-            <span class="mr-4">{{
-              transaction.description.length > 0
-                ? transaction.description
-                : "&#8212;"
-            }}</span>
+            <span class="mr-4">{{ transaction.description }}</span>
             <span class="font-bold" :class="moneyClass(transaction.amount)">
               {{ formatEuro(transaction.amount) }}
             </span>
