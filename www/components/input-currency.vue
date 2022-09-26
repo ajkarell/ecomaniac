@@ -12,7 +12,7 @@ const select = () => {
 defineExpose({ select });
 
 const props = defineProps<{
-  modelValue: number;
+  modelValue: number | null;
 }>();
 
 const options = { currency: "EUR", locale: "fi-FI" } as CurrencyInputOptions;
