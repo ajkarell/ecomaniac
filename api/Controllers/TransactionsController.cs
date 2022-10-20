@@ -63,39 +63,33 @@ public class TransactionsController : ControllerBase
         }
 
         var existing = await _db.Transactions.FindAsync(transaction.Id);
-        if (existing != null)
-        {
-            if (!TransactionValidator.Validate(transaction, out var errorMessage))
-            {
-                return BadRequest(errorMessage);
-            }
 
-            existing.Date = transaction.Date;
-            existing.Amount = transaction.Amount;
-            existing.Description = transaction.Description;
-
-            await _db.SaveChangesAsync();
-            return NoContent();
-        }
-        else
-        {
+        if (existing == null)
             return NotFound();
+
+        if (!TransactionValidator.Validate(transaction, out var errorMessage))
+        {
+            return BadRequest(errorMessage);
         }
+
+        existing.Date = transaction.Date;
+        existing.Amount = transaction.Amount;
+        existing.Description = transaction.Description;
+
+        await _db.SaveChangesAsync();
+        return NoContent();
     }
 
     [HttpDelete("transactions/{id}")]
     public async Task<ActionResult> DeleteTransaction([Required] int id)
     {
         var transaction = await _db.Transactions.FindAsync(id);
-        if (transaction != null)
-        {
-            _db.Remove(transaction);
-            await _db.SaveChangesAsync();
-            return NoContent();
-        }
-        else
-        {
+
+        if (transaction == null)
             return NotFound();
-        }
+
+        _db.Remove(transaction);
+        await _db.SaveChangesAsync();
+        return NoContent();
     }
 }
